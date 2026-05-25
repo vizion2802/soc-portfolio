@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel | SOC Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #050a05;
+      --panel: #0f1a0f;
+      --border: #1e3a1e;
+      --green: #39ff5a;
+      --text: #d4edda;
+      --text-dim: #7fb87f;
+      --amber: #f5a623;
+      --red: #ff3b3b;
+      --font-mono: 'Share Tech Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--font-mono);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN ── */
+    #loginBox {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      z-index: 999;
+    }
+
+    #loginBox h2 {
+      font-family: var(--font-display);
+      color: var(--green);
+      font-size: 1.6rem;
+      letter-spacing: -0.03em;
+    }
+
+    #loginBox .login-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    #loginBox input {
+      width: 280px;
+      text-align: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.7rem;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      outline: none;
+      letter-spacing: 0.08em;
+      transition: border-color 0.2s;
+    }
+    #loginBox input:focus { border-color: var(--green); }
+
+    #loginBox button {
+      width: 280px;
+      background: var(--green);
+      border: none;
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--black);
+      transition: all 0.2s;
+    }
+    #loginBox button:hover {
+      background: transparent;
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+    #loginBox button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #loginError {
+      font-size: 12px;
+      color: var(--red);
+      min-height: 1.2rem;
+      text-align: center;
+    }
+
+    .login-note {
+      font-size: 10px;
+      color: var(--text-dim);
+      opacity: 0.5;
+      margin-top: 1rem;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.6;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1rem;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--green);
+      margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .menu a {
+      display: block;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 0.75rem 0.8rem;
+      border-left: 2px solid transparent;
+      margin-bottom: 0.4rem;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .menu a:hover {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: rgba(57,255,90,0.05);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header h1 {
+      font-family: var(--font-display);
+      color: var(--green);
+      font-size: 1.4rem;
+      letter-spacing: -0.03em;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 1.4s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+
+    .card h3 {
+      color: var(--green);
+      margin-bottom: 1rem;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--green);
+    }
+
+    button {
+      background: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--black);
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: transparent;
+      color: var(--green);
+    }
+
+    /* ── PUBLISH MSG ── */
+    #publishMsg {
+      margin-top: 10px;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-left: 2px solid var(--green);
+      display: none;
+    }
+
+    /* ── ADMIN POSTS ── */
+    #adminPosts {
+      margin-top: 1rem;
+    }
+
+    .admin-post {
+      border: 1px solid var(--border);
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: rgba(57,255,90,0.02);
+    }
+
+    .admin-post h3 {
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 0.25rem;
+    }
+
+    .admin-post small {
+      color: var(--text-dim);
+      font-size: 10px;
+      display: block;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.06em;
+    }
+
+    .admin-post p {
+      color: var(--text-dim);
+      font-size: 11px;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+
+    .admin-post button {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-size: 10px;
+      padding: 0.3rem 0.7rem;
+    }
+    .admin-post button:hover {
+      background: var(--red);
+      color: white;
+    }
+
+    /* ── LOG ── */
+    .log {
+      margin-top: 1rem;
+      font-size: 12px;
+      color: var(--text-dim);
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .log p {
+      margin-bottom: 0.5rem;
+      border-left: 2px solid var(--amber);
+      padding-left: 0.5rem;
+    }
+
+    /* ── TERMINAL ── */
+    .terminal {
+      background: black;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      font-size: 12px;
+      height: 180px;
+      overflow-y: auto;
+      margin-top: 0.5rem;
+    }
+    .terminal p { margin-bottom: 0.3rem; }
+
+    .green { color: var(--green); }
+    .red   { color: var(--red); }
+    .amber { color: var(--amber); }
+
+    /* ── WIDE CARD ── */
+    .card-wide {
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginBox">
+  <h2>ADMIN LOGIN</h2>
+  <p class="login-sub">SOC Dashboard — Restricted Area</p>
+  <input id="password" type="password" placeholder="Enter password" autocomplete="current-password"
+         onkeydown="if(event.key==='Enter') checkPassword()" />
+  <button id="loginBtn" onclick="checkPassword()">Login</button>
+  <p id="loginError"></p>
+  <p class="login-note">3 failed attempts will lock the panel for 10 minutes.</p>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="logo">AT ADMIN</div>
+  <div class="menu">
+    <a href="#">Dashboard</a>
+    <a href="#">Blog Manager</a>
+    <a href="#">Projects</a>
+    <a href="index.html">← Portfolio</a>
+    <a onclick="lockPanel()">Logout</a>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="header">
+    <h1>Control Panel</h1>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      System: ONLINE &nbsp;·&nbsp; User: ADMIN
+    </div>
+  </div>
+
+  <!-- Hidden until logged in -->
+  <div id="adminPanel" style="display:none;">
+
+    <div class="grid">
+
+      <!-- BLOG POST CREATOR -->
+      <div class="card">
+        <h3>Create Blog Post</h3>
+        <input id="title" type="text" placeholder="Post Title" maxlength="120" />
+        <textarea id="content" rows="5" placeholder="Post Content (plain text)" maxlength="5000"></textarea>
+        <button onclick="publishPost()">Publish Post</button>
+        <div id="publishMsg"></div>
+      </div>
+
+      <!-- PROJECT UPDATE -->
+      <div class="card">
+        <h3>Project Note</h3>
+        <input id="project" type="text" placeholder="Project Name" maxlength="80" />
+        <textarea id="desc" rows="3" placeholder="Update Description" maxlength="500"></textarea>
+        <button onclick="addProject()">Log Update</button>
+        <div class="log" id="projectLog"></div>
+      </div>
+
+      <!-- ADMIN TERMINAL -->
+      <div class="card">
+        <h3>Admin Terminal</h3>
+        <div class="terminal" id="terminal">
+          <p class="green">[SYSTEM] Admin panel initialized</p>
+          <p class="amber">[INFO] Type "help" for commands</p>
+        </div>
+        <input id="cmd" type="text" placeholder="run command…"
+               onkeydown="runCmd(event)" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <!-- PUBLISHED POSTS -->
+      <div class="card card-wide">
+        <h3>Published Posts</h3>
+        <div id="adminPosts"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/blog.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
