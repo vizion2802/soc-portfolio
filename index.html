@@ -960,121 +960,9 @@
     </div>
 
     <div class="projects-grid" id="projects-grid">
-
-      <div class="project-card" data-type="soc">
-        <span class="project-tag">SOC</span>
-        <div class="project-title">Building a SOC Lab</div>
-        <div class="project-desc">
-          Designed and built a home SOC environment using Sysmon and PowerShell-based detection rules.
-          Ingested event logs into a local SIEM, built dashboards, and tuned alerts to
-          reduce false positives. Simulated real attack TTPs to validate coverage.
-        </div>
-        <div class="project-stack">
-          <span class="stack-item">Sysmon</span>
-          <span class="stack-item">PowerShell</span>
-          <span class="stack-item">Elastic</span>
-          <span class="stack-item">MITRE ATT&CK</span>
-        </div>
-        <a href="reports/soc-lab.pdf" target="_blank" rel="noopener" class="project-link">
-          <i class="fas fa-file-pdf"></i> View Report
-        </a>
+      <div class="project-card" style="grid-column:1/-1;text-align:center;color:var(--text-dim);font-size:13px;padding:3rem;">
+        Loading projects...
       </div>
-
-      <div class="project-card" data-type="ml">
-        <span class="project-tag">ML / Data</span>
-        <div class="project-title">PCAP Network Anomaly Detection</div>
-        <div class="project-desc">
-          Trained a machine learning model on labeled network captures to detect
-          anomalous traffic patterns. Feature-engineered flow statistics from raw PCAP
-          files using Scapy. Evaluated against benign and C2-beaconing samples.
-        </div>
-        <div class="project-stack">
-          <span class="stack-item">Python</span>
-          <span class="stack-item">Scapy</span>
-          <span class="stack-item">Scikit-learn</span>
-          <span class="stack-item">Wireshark</span>
-        </div>
-        <a href="reports/pcap-anomaly.pdf" target="_blank" rel="noopener" class="project-link">
-          <i class="fas fa-file-pdf"></i> View Report
-        </a>
-      </div>
-
-      <div class="project-card" data-type="pentest">
-        <span class="project-tag">Pen Test</span>
-        <div class="project-title">Ethical Hacking &amp; Web App Testing</div>
-        <div class="project-desc">
-          Deployed a vulnerable VM environment and used Burp Suite, Nmap, and Metasploit
-          to identify and exploit web application weaknesses. Documented findings in
-          a structured pentest report with remediation recommendations.
-        </div>
-        <div class="project-stack">
-          <span class="stack-item">Burp Suite</span>
-          <span class="stack-item">Nmap</span>
-          <span class="stack-item">Metasploit</span>
-          <span class="stack-item">OWASP Top 10</span>
-        </div>
-        <a href="reports/ethical-hacking.pdf" target="_blank" rel="noopener" class="project-link">
-          <i class="fas fa-file-pdf"></i> View Report
-        </a>
-      </div>
-
-      <div class="project-card" data-type="soc">
-        <span class="project-tag">SOC</span>
-        <div class="project-title">Writing Sigma Detection Rules</div>
-        <div class="project-desc">
-          Authored a collection of Sigma detection rules targeting common lateral
-          movement and persistence techniques. Converted to Splunk SPL and
-          Elastic Query DSL for cross-SIEM deployment and tested against attack simulations.
-        </div>
-        <div class="project-stack">
-          <span class="stack-item">Sigma</span>
-          <span class="stack-item">Splunk</span>
-          <span class="stack-item">KQL</span>
-          <span class="stack-item">ATT&CK T1547</span>
-        </div>
-        <a href="reports/sigma-rules.pdf" target="_blank" rel="noopener" class="project-link">
-          <i class="fas fa-file-pdf"></i> View Report
-        </a>
-      </div>
-
-      <div class="project-card" data-type="ml">
-        <span class="project-tag">ML / Data</span>
-        <div class="project-title">Phishing URL Classifier</div>
-        <div class="project-desc">
-          Built a URL classifier using NLP and lexical features to distinguish
-          phishing from legitimate URLs. Achieved 94% accuracy on hold-out set.
-          Packaged as a lightweight API for potential SOC tooling integration.
-        </div>
-        <div class="project-stack">
-          <span class="stack-item">Python</span>
-          <span class="stack-item">Flask</span>
-          <span class="stack-item">XGBoost</span>
-          <span class="stack-item">NLTK</span>
-        </div>
-        <a href="reports/phishing-classifier.pdf" target="_blank" rel="noopener" class="project-link">
-          <i class="fas fa-file-pdf"></i> View Report
-        </a>
-      </div>
-
-      <div class="project-card" data-type="soc">
-        <span class="project-tag">SOC</span>
-        <div class="project-title">Incident Response Playbooks</div>
-        <div class="project-desc">
-          Developed structured IR playbooks for common alert types: ransomware,
-          brute-force, data exfiltration, and insider threat. Documented triage steps,
-          escalation paths, and containment strategies aligned to NIST CSF.
-        </div>
-        <div class="project-stack">
-          <span class="stack-item">NIST CSF</span>
-          <span class="stack-item">MITRE ATT&CK</span>
-          <span class="stack-item">TheHive</span>
-          <span class="stack-item">Markdown</span>
-        </div>
-        <a href="reports/ir-playbooks.pdf" target="_blank" rel="noopener" class="project-link">
-          <i class="fas fa-file-pdf"></i> View Report
-        </a>
-      </div>
-
     </div>
   </div>
 </section>
@@ -1112,21 +1000,21 @@
 
     <div class="certs-grid">
 
-      <a href="Coursera RZ0ESUSBD0KL.PDF" target="_blank" rel="noopener" class="cert-card">
+      <a href="certs/google-cybersecurity.pdf" target="_blank" rel="noopener" class="cert-card">
         <div class="cert-icon"><i class="fab fa-google"></i></div>
         <div class="cert-name">Google Cybersecurity Certificate</div>
         <div class="cert-status cert-done"><span class="dot dot-green"></span> Completed</div>
         <div class="cert-view"><i class="fas fa-file-pdf"></i> View Certificate</div>
       </a>
 
-      <a href="Adeleke Theophilus O.pdf" target="_blank" rel="noopener" class="cert-card">
+      <a href="certs/internship-cert.pdf" target="_blank" rel="noopener" class="cert-card">
         <div class="cert-icon"><i class="fas fa-briefcase"></i></div>
         <div class="cert-name">Internship Certificate</div>
         <div class="cert-status cert-done"><span class="dot dot-green"></span> Completed</div>
         <div class="cert-view"><i class="fas fa-file-pdf"></i> View Certificate</div>
       </a>
 
-      <a href="IMG-20251210-WA0024.jpg" target="_blank" rel="noopener" class="cert-card">
+      <a href="certs/netisens-ict.pdf" target="_blank" rel="noopener" class="cert-card">
         <div class="cert-icon"><i class="fas fa-network-wired"></i></div>
         <div class="cert-name">Netisens ICT Certification</div>
         <div class="cert-status cert-done"><span class="dot dot-green"></span> Completed</div>
@@ -1193,7 +1081,7 @@
 </section>
 
 <footer>
-  <p>© 2026 Adeleke Theophilus Oluwaferanmi &nbsp;·&nbsp; SOC Analyst &nbsp;·&nbsp; Built in the terminal &nbsp;·&nbsp; <a href="admin.html" style="color:var(--text-dim);text-decoration:none;opacity:0.4;" title="Admin">⚙</a></p>
+  <p>© 2025 Adeleke Theophilus Oluwaferanmi &nbsp;·&nbsp; SOC Analyst &nbsp;·&nbsp; Built in the terminal</p>
 </footer>
 
 <!-- SCRIPTS -->
@@ -1413,11 +1301,110 @@ function downloadCV() {
 <script>
 sessionStorage.setItem("entryPoint", "portfolio");
 </script>
+
+<script>
+// =========================
+// LOAD PROJECTS FROM SUPABASE
+// =========================
+var SUPA_URL_IDX  = "https://zocllfhpzsomhxtpyrdd.supabase.co";
+var SUPA_ANON_IDX = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
+
+var activeProjectFilter = "all";
+var allProjectsCache    = [];
+
+async function loadProjects() {
+  var grid = document.getElementById("projects-grid");
+  try {
+    var res = await fetch(
+      SUPA_URL_IDX + "/rest/v1/projects?order=created_at.desc",
+      { headers: { "apikey": SUPA_ANON_IDX, "Authorization": "Bearer " + SUPA_ANON_IDX } }
+    );
+    allProjectsCache = await res.json();
+    renderProjects(allProjectsCache);
+  } catch(e) {
+    grid.innerHTML = "<div class='project-card' style='grid-column:1/-1;color:var(--text-dim);font-size:13px;padding:2rem;'>Failed to load projects.</div>";
+  }
+}
+
+function renderProjects(projects) {
+  var grid = document.getElementById("projects-grid");
+  grid.innerHTML = "";
+
+  var filtered = projects.filter(function(p) {
+    return activeProjectFilter === "all" || p.category === activeProjectFilter;
+  });
+
+  if (!filtered || filtered.length === 0) {
+    grid.innerHTML = "<div class='project-card' style='grid-column:1/-1;text-align:center;color:var(--text-dim);font-size:13px;padding:3rem;'>No projects yet. Add one from the admin panel.</div>";
+    return;
+  }
+
+  filtered.forEach(function(proj) {
+    var card = document.createElement("div");
+    card.className = "project-card";
+    card.dataset.type = proj.category;
+
+    var tag = document.createElement("span");
+    tag.className = "project-tag";
+    tag.textContent = proj.category.toUpperCase();
+
+    var title = document.createElement("div");
+    title.className = "project-title";
+    title.textContent = proj.title;
+
+    var desc = document.createElement("div");
+    desc.className = "project-desc";
+    desc.textContent = proj.description;
+
+    var stackDiv = document.createElement("div");
+    stackDiv.className = "project-stack";
+    proj.stack.split(",").forEach(function(s) {
+      var span = document.createElement("span");
+      span.className = "stack-item";
+      span.textContent = s.trim();
+      stackDiv.appendChild(span);
+    });
+
+    var linksDiv = document.createElement("div");
+    linksDiv.style.cssText = "display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;";
+
+    if (proj.report_url) {
+      var rLink = document.createElement("a");
+      rLink.href = proj.report_url; rLink.target = "_blank"; rLink.rel = "noopener";
+      rLink.className = "project-link";
+      rLink.innerHTML = '<i class="fas fa-file-pdf"></i> View Report';
+      linksDiv.appendChild(rLink);
+    }
+
+    if (proj.screenshot_url) {
+      var sLink = document.createElement("a");
+      sLink.href = proj.screenshot_url; sLink.target = "_blank"; sLink.rel = "noopener";
+      sLink.className = "project-link";
+      sLink.innerHTML = '<i class="fas fa-image"></i> Screenshot';
+      linksDiv.appendChild(sLink);
+    }
+
+    card.append(tag, title, desc, stackDiv, linksDiv);
+    grid.appendChild(card);
+  });
+}
+
+function filterProjects(type, btn) {
+  activeProjectFilter = type;
+  document.querySelectorAll(".filter-btn").forEach(function(b){ b.classList.remove("active"); });
+  if (btn) btn.classList.add("active");
+  renderProjects(allProjectsCache);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadProjects();
+});
+</script>
+
 <script src="blog.js"></script>
 <script>
-// Close mobile menu when a link is clicked
-document.querySelectorAll('#mobile-menu a').forEach(a => {
-  a.addEventListener('click', () => {
+document.querySelectorAll('#mobile-menu a').forEach(function(a) {
+  a.addEventListener('click', function() {
     document.getElementById('mobile-menu').classList.remove('open');
   });
 });
