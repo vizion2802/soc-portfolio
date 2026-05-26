@@ -3,113 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Blog Post | SOC Field Notes</title>
+  <title>Blog | SOC Field Notes</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #050a05; --panel: #0f1a0f; --border: #1e3a1e;
-      --green: #39ff5a; --text: #d4edda; --dim: #7fb87f;
+      --bg: #050a05;
+      --panel: #0f1a0f;
+      --border: #1e3a1e;
+      --green: #39ff5a;
+      --text: #d4edda;
+      --dim: #7fb87f;
+      --amber: #f5a623;
       --font-mono: 'Share Tech Mono', monospace;
       --font-display: 'Syne', sans-serif;
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-    body { background:var(--bg); color:var(--text); font-family:var(--font-mono); line-height:1.7; }
+    body { background:var(--bg); color:var(--text); font-family:var(--font-mono); }
 
     .nav {
       display:flex; justify-content:space-between; align-items:center;
-      padding:1.5rem 2rem; border-bottom:1px solid var(--border);
+      padding:1.25rem 2rem; border-bottom:1px solid var(--border);
       background:rgba(15,26,15,0.8); backdrop-filter:blur(10px);
       position:sticky; top:0; z-index:10;
     }
-    .nav h1 { font-family:var(--font-display); color:var(--green); font-size:1.2rem; }
-    .nav a { color:var(--text); text-decoration:none; margin-left:1.5rem; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; }
-    .nav a:hover { color:var(--green); }
+    .nav-logo { font-family:var(--font-display); color:var(--green); font-size:1.1rem; font-weight:800; text-decoration:none; }
+    .nav-links a { color:var(--text); text-decoration:none; margin-left:1.5rem; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--green); }
 
-    .container { max-width:760px; margin:0 auto; padding:4rem 2rem 6rem; }
-    .post-category { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--dim); display:inline-block; border:1px solid rgba(127,184,127,0.3); padding:0.2rem 0.6rem; margin-bottom:1.25rem; }
-    .post-title { font-family:var(--font-display); font-size:clamp(1.6rem,4vw,2.4rem); font-weight:800; color:#e8f5e8; line-height:1.1; letter-spacing:-0.03em; margin-bottom:0.75rem; }
-    .post-meta { color:var(--dim); font-size:11px; letter-spacing:0.08em; margin-bottom:3rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
-    .post-content { font-size:14px; line-height:1.9; color:var(--text); white-space:pre-line; }
+    .hero { padding:4rem 2rem 3rem; max-width:900px; margin:0 auto; }
+    .hero-label { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--green); display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem; }
+    .hero-label::before { content:''; height:1px; width:1.5rem; background:var(--green); }
+    .hero h2 { font-family:var(--font-display); font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#e8f5e8; letter-spacing:-0.04em; line-height:1.05; margin-bottom:0.75rem; }
+    .hero p { color:var(--dim); font-size:13px; line-height:1.7; }
 
-    .back { display:inline-flex; align-items:center; gap:0.5rem; margin-top:4rem; padding:0.7rem 1.2rem; border:1px solid var(--border); color:var(--dim); text-decoration:none; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; transition:all 0.2s; }
-    .back:hover { border-color:var(--green); color:var(--green); }
+    .grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:1px; background:var(--border);
+      padding:0 2rem; max-width:900px; margin:0 auto;
+    }
 
-    .loading { color:var(--dim); font-size:13px; padding:4rem 2rem; text-align:center; }
+    .card { background:var(--panel); padding:1.5rem; transition:background 0.2s; position:relative; }
+    .card::before { content:''; position:absolute; top:0; left:0; width:2px; height:100%; background:transparent; transition:background 0.2s; }
+    .card:hover { background:#131f13; }
+    .card:hover::before { background:var(--amber); }
+
+    .meta { font-size:10px; color:var(--dim); display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; }
+    .cat-badge { color:var(--amber); letter-spacing:0.1em; text-transform:uppercase; border:1px solid rgba(245,166,35,0.3); padding:0.15rem 0.4rem; }
+    .post-title { font-family:var(--font-display); font-size:1rem; font-weight:700; color:#e8f5e8; line-height:1.25; margin-bottom:0.6rem; }
+    .excerpt { font-size:12px; color:var(--text); line-height:1.7; margin-bottom:1.1rem; }
+    .read-link { display:inline-flex; align-items:center; gap:0.4rem; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--dim); text-decoration:none; transition:color 0.2s; }
+    .card:hover .read-link { color:var(--amber); }
+
+    .empty { grid-column:1/-1; padding:4rem 0; text-align:center; color:var(--dim); font-size:13px; }
+    .loading { text-align:center; padding:4rem 2rem; color:var(--dim); font-size:13px; }
+
+    .footer { max-width:900px; margin:3rem auto 0; padding:1.5rem 2rem; border-top:1px solid var(--border); font-size:11px; color:var(--dim); display:flex; justify-content:space-between; }
+
+    @media(max-width:600px) {
+      .grid { padding:0 1rem; }
+      .hero { padding:2.5rem 1rem 2rem; }
+    }
   </style>
 </head>
 <body>
 
 <nav class="nav">
-  <h1>SOC Blog</h1>
-  <div>
+  <a href="index.html" class="nav-logo">AT./</a>
+  <div class="nav-links">
     <a href="index.html">Portfolio</a>
     <a href="blog.html">Blog</a>
   </div>
 </nav>
 
-<div id="post-container" class="loading">Loading post...</div>
+<header class="hero">
+  <div class="hero-label">Field Notes</div>
+  <h2>Cybersecurity<br>Journal</h2>
+  <p>Write-ups, experiments, and lessons from the SOC learning journey.</p>
+</header>
+
+<div class="grid" id="blog-container">
+  <div class="loading">Loading posts...</div>
+</div>
+
+<footer class="footer">
+  <span>SOC Field Notes — Adeleke Theophilus</span>
+  <span id="post-count" style="color:var(--green)"></span>
+</footer>
 
 <script>
-const SUPABASE_URL  = "https://zocllfhpzsomhxtpyrdd.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
+var SUPABASE_URL  = "https://zocllfhpzsomhxtpyrdd.supabase.co";
+var SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
 
-async function loadPost() {
-  const params = new URLSearchParams(window.location.search);
-  const id     = params.get("id");
-  const from   = params.get("from") || "blog";
-  const container = document.getElementById("post-container");
+sessionStorage.setItem("entryPoint", "blog");
 
-  const res = await fetch(
-    SUPABASE_URL + "/rest/v1/blog_posts?id=eq." + id,
-    { headers: { "apikey": SUPABASE_ANON, "Authorization": "Bearer " + SUPABASE_ANON } }
-  );
+async function loadPosts() {
+  var container = document.getElementById("blog-container");
+  var counter   = document.getElementById("post-count");
 
-  const posts = await res.json();
-  const post  = posts[0];
+  try {
+    var res = await fetch(
+      SUPABASE_URL + "/rest/v1/blog_posts?order=created_at.desc",
+      {
+        headers: {
+          "apikey":        SUPABASE_ANON,
+          "Authorization": "Bearer " + SUPABASE_ANON
+        }
+      }
+    );
 
-  if (!post) {
-    container.innerHTML = `<div style="text-align:center;padding:6rem 2rem;">
-      <h2 style="font-family:'Syne',sans-serif;color:#39ff5a;font-size:2rem;margin-bottom:1rem;">Post Not Found</h2>
-      <a class="back" href="blog.html">← Back to Blog</a>
-    </div>`;
-    return;
+    var posts = await res.json();
+    container.innerHTML = "";
+
+    if (!posts || posts.length === 0) {
+      container.innerHTML = "<div class='empty'>No posts yet. Check back soon.</div>";
+      return;
+    }
+
+    counter.textContent = posts.length + " post" + (posts.length !== 1 ? "s" : "");
+
+    posts.forEach(function(post) {
+      var card = document.createElement("div");
+      card.className = "card";
+
+      var badge = document.createElement("span");
+      badge.className = "cat-badge";
+      badge.textContent = post.category;
+
+      var date = document.createElement("span");
+      date.textContent = post.date;
+
+      var meta = document.createElement("div");
+      meta.className = "meta";
+      meta.append(badge, date);
+
+      var title = document.createElement("div");
+      title.className = "post-title";
+      title.textContent = post.title;
+
+      var excerpt = document.createElement("div");
+      excerpt.className = "excerpt";
+      excerpt.textContent = (post.content || "").substring(0, 140) + "…";
+
+      var link = document.createElement("a");
+      link.className = "read-link";
+      link.href = "blog-post.html?id=" + encodeURIComponent(post.id) + "&from=blog";
+      link.textContent = "Read more →";
+
+      card.append(meta, title, excerpt, link);
+      container.appendChild(card);
+    });
+
+  } catch (err) {
+    container.innerHTML = "<div class='empty'>Failed to load posts. Please try again.</div>";
+    console.error(err);
   }
-
-  document.title = post.title + " | SOC Field Notes";
-
-  const backHref  = from === "portfolio" ? "index.html" : "blog.html";
-  const backLabel = from === "portfolio" ? "← Portfolio" : "← Back to Blog";
-
-  const article = document.createElement("div");
-  article.className = "container";
-
-  const cat = document.createElement("span");
-  cat.className = "post-category";
-  cat.textContent = post.category;
-
-  const title = document.createElement("h1");
-  title.className = "post-title";
-  title.textContent = post.title;
-
-  const meta = document.createElement("div");
-  meta.className = "post-meta";
-  meta.textContent = post.date;
-
-  const content = document.createElement("div");
-  content.className = "post-content";
-  content.textContent = post.content;
-
-  const back = document.createElement("a");
-  back.className = "back";
-  back.href = backHref;
-  back.textContent = backLabel;
-
-  article.append(cat, title, meta, content, back);
-  container.className = "";
-  container.appendChild(article);
 }
 
-loadPost();
+loadPosts();
 </script>
 
 </body>
