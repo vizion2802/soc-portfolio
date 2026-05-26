@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/admin.html",
+      "destination": "/404.html",
+      "permanent": false
+    }
+  ]
+}
