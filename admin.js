@@ -1,31 +1,30 @@
 // =========================
-// ADMIN PANEL — admin.js v5
-// Supabase Edge Function
+// ADMIN PANEL — admin.js v6
 // =========================
 
 console.log("ADMIN PANEL CONNECTED ✅");
 
-const ADMIN_HASH   = "d329574f747890c4b6d489aa1a32669bb10ba4ba54190919daaafe2a79bfb3e3";
-const EDGE_URL     = "https://zocllfhpzsomhxtpyrdd.supabase.co/functions/v1/manage-posts";
-const ADMIN_SECRET = "SOC@dmin$ecret2026!";
+var ADMIN_HASH   = "d329574f747890c4b6d489aa1a32669bb10ba4ba54190919daaafe2a79bfb3e3";
+var EDGE_URL     = "https://zocllfhpzsomhxtpyrdd.supabase.co/functions/v1/manage-posts";
+var ADMIN_SECRET = "SOC@dmin$ecret2026!";
 
-const SUPABASE_URL  = "https://zocllfhpzsomhxtpyrdd.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
+var SUPA_URL  = "https://zocllfhpzsomhxtpyrdd.supabase.co";
+var SUPA_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
 
-let attempts = 0;
-const MAX_ATTEMPTS = 3;
-const LOCK_MS = 10 * 60 * 1000;
+var attempts     = 0;
+var MAX_ATTEMPTS = 3;
+var LOCK_MS      = 10 * 60 * 1000;
 
 // =========================
 // HASH HELPER
 // =========================
 async function sha256(str) {
-  const buf = await crypto.subtle.digest(
+  var buf = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(str)
   );
   return [...new Uint8Array(buf)]
-    .map(b => b.toString(16).padStart(2, "0"))
+    .map(function(b) { return b.toString(16).padStart(2, "0"); })
     .join("");
 }
 
@@ -33,23 +32,23 @@ async function sha256(str) {
 // LOGIN
 // =========================
 async function checkPassword() {
-  const input = document.getElementById("password").value;
-  const error = document.getElementById("loginError");
-  const btn   = document.getElementById("loginBtn");
+  var input = document.getElementById("password").value;
+  var error = document.getElementById("loginError");
+  var btn   = document.getElementById("loginBtn");
 
-  const lockUntil = localStorage.getItem("adminLockUntil");
+  var lockUntil = localStorage.getItem("adminLockUntil");
   if (lockUntil && Date.now() < Number(lockUntil)) {
-    const remaining = Math.ceil((Number(lockUntil) - Date.now()) / 1000);
+    var remaining = Math.ceil((Number(lockUntil) - Date.now()) / 1000);
     error.textContent = "🔒 Locked. Try again in " + remaining + "s";
     return;
   }
 
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = "Checking…";
 
-  const hash = await sha256(input);
+  var hash = await sha256(input);
 
-  btn.disabled = false;
+  btn.disabled    = false;
   btn.textContent = "Login";
 
   if (hash === ADMIN_HASH) {
@@ -71,7 +70,7 @@ async function checkPassword() {
 // SHOW PANEL
 // =========================
 function showPanel() {
-  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("loginBox").style.display  = "none";
   document.getElementById("adminPanel").style.display = "block";
   loadAdminPosts();
 }
@@ -80,9 +79,9 @@ function showPanel() {
 // AUTO LOGIN CHECK
 // =========================
 window.onload = function () {
-  const lockUntil = localStorage.getItem("adminLockUntil");
+  var lockUntil = localStorage.getItem("adminLockUntil");
   if (lockUntil && Date.now() < Number(lockUntil)) {
-    const remaining = Math.ceil((Number(lockUntil) - Date.now()) / 1000);
+    var remaining = Math.ceil((Number(lockUntil) - Date.now()) / 1000);
     document.getElementById("loginError").textContent = "🔒 Locked. Try again in " + remaining + "s";
     return;
   }
@@ -100,35 +99,35 @@ function lockPanel() {
 }
 
 // =========================
-// PUBLISH POST — via Edge Function
+// PUBLISH POST
 // =========================
 async function publishPost() {
-  const title   = document.getElementById("title").value.trim();
-  const content = document.getElementById("content").value.trim();
-  const msg     = document.getElementById("publishMsg");
+  var title   = document.getElementById("title").value.trim();
+  var content = document.getElementById("content").value.trim();
+  var msg     = document.getElementById("publishMsg");
 
   if (!title || !content) {
-    msg.style.color = "#ff3b3b";
-    msg.textContent = "⚠️ Title and content are required.";
+    msg.style.color   = "#ff3b3b";
+    msg.textContent   = "⚠️ Title and content are required.";
     msg.style.display = "block";
     return;
   }
 
-  msg.style.color = "#f5a623";
-  msg.textContent = "⏳ Publishing...";
+  msg.style.color   = "#f5a623";
+  msg.textContent   = "⏳ Publishing...";
   msg.style.display = "block";
 
   try {
-    const res = await fetch(EDGE_URL, {
+    var res = await fetch(EDGE_URL, {
       method: "POST",
       headers: {
-        "Content-Type":    "application/json",
-        "x-admin-secret":  ADMIN_SECRET
+        "Content-Type":   "application/json",
+        "x-admin-secret": ADMIN_SECRET
       },
-      body: JSON.stringify({ title, content, category: "General" })
+      body: JSON.stringify({ title: title, content: content, category: "General" })
     });
 
-    const data = await res.json();
+    var data = await res.json();
 
     if (res.ok && data.success) {
       clearForm();
@@ -147,43 +146,52 @@ async function publishPost() {
 }
 
 // =========================
-// DELETE POST — via Edge Function
+// DELETE POST
 // =========================
-async function deletePost(id) {
+async function adminDeletePost(id, title) {
+  if (!confirm("Delete \"" + title + "\"?")) return;
+
+  var ok = false;
+
   try {
-    const res = await fetch(EDGE_URL, {
+    var res = await fetch(EDGE_URL, {
       method: "DELETE",
       headers: {
         "Content-Type":   "application/json",
         "x-admin-secret": ADMIN_SECRET
       },
-      body: JSON.stringify({ id })
+      body: JSON.stringify({ id: id })
     });
-    const data = await res.json();
-    return res.ok && data.success;
+    var data = await res.json();
+    ok = res.ok && data.success;
   } catch (err) {
     console.error("Delete failed:", err);
-    return false;
+  }
+
+  if (ok) {
+    loadAdminPosts();
+  } else {
+    alert("Failed to delete post.");
   }
 }
 
 // =========================
-// GET ALL POSTS — public read
+// GET ALL POSTS
 // =========================
-async function getAllPosts() {
+async function getAdminPosts() {
   try {
-    const res = await fetch(
-      SUPABASE_URL + "/rest/v1/blog_posts?order=created_at.desc",
+    var res = await fetch(
+      SUPA_URL + "/rest/v1/blog_posts?order=created_at.desc",
       {
         headers: {
-          "apikey":        SUPABASE_ANON,
-          "Authorization": "Bearer " + SUPABASE_ANON
+          "apikey":        SUPA_ANON,
+          "Authorization": "Bearer " + SUPA_ANON
         }
       }
     );
     if (!res.ok) return [];
     return await res.json();
-  } catch {
+  } catch (err) {
     return [];
   }
 }
@@ -200,12 +208,12 @@ function clearForm() {
 // LOAD ADMIN POSTS
 // =========================
 async function loadAdminPosts() {
-  const container = document.getElementById("adminPosts");
+  var container = document.getElementById("adminPosts");
   if (!container) return;
 
   container.innerHTML = "<p style='color:var(--text-dim);font-size:12px;'>Loading...</p>";
 
-  const posts = await getAllPosts();
+  var posts = await getAdminPosts();
 
   if (!posts || posts.length === 0) {
     container.innerHTML = "<p style='color:var(--text-dim);font-size:12px;'>No posts yet.</p>";
@@ -215,29 +223,22 @@ async function loadAdminPosts() {
   container.innerHTML = "";
 
   posts.forEach(function(post) {
-    const wrap = document.createElement("div");
+    var wrap = document.createElement("div");
     wrap.className = "admin-post";
 
-    const h3 = document.createElement("h3");
+    var h3 = document.createElement("h3");
     h3.textContent = post.title;
 
-    const meta = document.createElement("small");
+    var meta = document.createElement("small");
     meta.textContent = post.category + " | " + post.date;
 
-    const excerpt = document.createElement("p");
+    var excerpt = document.createElement("p");
     excerpt.textContent = (post.content || "").substring(0, 120) + "…";
 
-    const del = document.createElement("button");
+    var del = document.createElement("button");
     del.textContent = "Delete";
-    del.onclick = async function() {
-      if (confirm("Delete \"" + post.title + "\"?")) {
-        const ok = await deletePost(post.id);
-        if (ok) {
-          loadAdminPosts();
-        } else {
-          alert("Failed to delete post.");
-        }
-      }
+    del.onclick = function() {
+      adminDeletePost(post.id, post.title);
     };
 
     wrap.append(h3, meta, excerpt, del);
@@ -250,9 +251,9 @@ async function loadAdminPosts() {
 // =========================
 function runCmd(e) {
   if (e.key !== "Enter") return;
-  const cmd  = e.target.value.trim();
-  const term = document.getElementById("terminal");
-  const line = document.createElement("p");
+  var cmd  = e.target.value.trim();
+  var term = document.getElementById("terminal");
+  var line = document.createElement("p");
 
   if (cmd === "status") {
     line.innerHTML = "<span class='green'>System Running OK</span>";
@@ -261,7 +262,7 @@ function runCmd(e) {
   } else if (cmd === "help") {
     line.textContent = "Commands: status, logs, help";
   } else {
-    line.className = "red";
+    line.className   = "red";
     line.textContent = "Command not found: " + cmd;
   }
 
@@ -271,12 +272,12 @@ function runCmd(e) {
 }
 
 function addProject() {
-  const p = document.getElementById("project").value.trim();
-  const d = document.getElementById("desc").value.trim();
+  var p = document.getElementById("project").value.trim();
+  var d = document.getElementById("desc").value.trim();
   if (!p || !d) return;
 
-  const log  = document.getElementById("projectLog");
-  const item = document.createElement("p");
+  var log  = document.getElementById("projectLog");
+  var item = document.createElement("p");
   item.textContent = "[PROJECT] " + p + " — updated";
   log.appendChild(item);
 
