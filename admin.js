@@ -1,5 +1,5 @@
 // =========================
-// ADMIN PANEL — admin.js v6
+// ADMIN PANEL — admin.js v7
 // =========================
 
 console.log("ADMIN PANEL CONNECTED ✅");
@@ -122,7 +122,8 @@ async function publishPost() {
       method: "POST",
       headers: {
         "Content-Type":   "application/json",
-        "x-admin-secret": ADMIN_SECRET
+        "x-admin-secret": ADMIN_SECRET,
+        "Authorization":  "Bearer " + SUPA_ANON
       },
       body: JSON.stringify({ title: title, content: content, category: "General" })
     });
@@ -142,6 +143,7 @@ async function publishPost() {
   } catch (err) {
     msg.style.color = "#ff3b3b";
     msg.textContent = "❌ Network error. Check your connection.";
+    console.error(err);
   }
 }
 
@@ -151,27 +153,27 @@ async function publishPost() {
 async function adminDeletePost(id, title) {
   if (!confirm("Delete \"" + title + "\"?")) return;
 
-  var ok = false;
-
   try {
     var res = await fetch(EDGE_URL, {
       method: "DELETE",
       headers: {
         "Content-Type":   "application/json",
-        "x-admin-secret": ADMIN_SECRET
+        "x-admin-secret": ADMIN_SECRET,
+        "Authorization":  "Bearer " + SUPA_ANON
       },
       body: JSON.stringify({ id: id })
     });
-    var data = await res.json();
-    ok = res.ok && data.success;
-  } catch (err) {
-    console.error("Delete failed:", err);
-  }
 
-  if (ok) {
-    loadAdminPosts();
-  } else {
-    alert("Failed to delete post.");
+    var data = await res.json();
+
+    if (res.ok && data.success) {
+      loadAdminPosts();
+    } else {
+      alert("Failed to delete: " + (data.error || "Unknown error"));
+    }
+  } catch (err) {
+    alert("Network error. Check your connection.");
+    console.error(err);
   }
 }
 
@@ -192,6 +194,7 @@ async function getAdminPosts() {
     if (!res.ok) return [];
     return await res.json();
   } catch (err) {
+    console.error(err);
     return [];
   }
 }
