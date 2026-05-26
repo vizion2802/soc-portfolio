@@ -1,22 +1,40 @@
 // =========================
-// ADMIN PANEL — admin.js v3
-// Supabase powered
+// ADMIN PANEL — admin.js v4
+// Supabase + SHA-256 login
 // =========================
 
 console.log("ADMIN PANEL CONNECTED ✅");
 
-const ADMIN_PASSWORD = "S0c@l3rt#2026!";
+// SHA-256 hash of admin password
+// To update: run in console:
+// crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
+//   .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
+const ADMIN_HASH = "d329574f747890c4b6d489aa1a32669bb10ba4ba54190919daaafe2a79bfb3e3";
 
 let attempts = 0;
 const MAX_ATTEMPTS = 3;
 const LOCK_MS = 10 * 60 * 1000;
 
 // =========================
+// HASH HELPER
+// =========================
+async function sha256(str) {
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(str)
+  );
+  return [...new Uint8Array(buf)]
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// =========================
 // LOGIN
 // =========================
-function checkPassword() {
+async function checkPassword() {
   const input = document.getElementById("password").value;
   const error = document.getElementById("loginError");
+  const btn   = document.getElementById("loginBtn");
 
   const lockUntil = localStorage.getItem("adminLockUntil");
   if (lockUntil && Date.now() < Number(lockUntil)) {
@@ -25,7 +43,15 @@ function checkPassword() {
     return;
   }
 
-  if (input === ADMIN_PASSWORD) {
+  btn.disabled = true;
+  btn.textContent = "Checking…";
+
+  const hash = await sha256(input);
+
+  btn.disabled = false;
+  btn.textContent = "Login";
+
+  if (hash === ADMIN_HASH) {
     attempts = 0;
     localStorage.removeItem("adminLockUntil");
     sessionStorage.setItem("adminAuth", "true");
