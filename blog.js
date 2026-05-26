@@ -1,122 +1,107 @@
 // =========================
-// BLOG SYSTEM (FRONTEND)
-// blog.js — v2
+// BLOG SYSTEM — Supabase
+// blog.js v3
 // =========================
 
 console.log("BLOG SYSTEM CONNECTED ✅");
 
-let blogPosts = [];
+const SUPABASE_URL    = "https://zocllfhpzsomhxtpyrdd.supabase.co";
+const SUPABASE_ANON   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
+
+const HEADERS = {
+  "Content-Type":  "application/json",
+  "apikey":        SUPABASE_ANON,
+  "Authorization": "Bearer " + SUPABASE_ANON
+};
 
 // =========================
-// SANITIZE (prevent XSS)
+// FETCH ALL POSTS
 // =========================
-function sanitize(str) {
-  const div = document.createElement("div");
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
+async function getAllPosts() {
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/blog_posts?order=created_at.desc",
+    { headers: HEADERS }
+  );
+  if (!res.ok) return [];
+  return await res.json();
 }
 
 // =========================
-// ADD NEW POST
+// ADD POST
 // =========================
-function addBlogPost(title, content, category = "General", date = new Date()) {
-  if (!title || !content) return;
-
-  const post = {
-    id: Date.now(),
-    title: title.trim(),
-    content: content.trim(),
-    category: category.trim(),
-    date: new Date(date).toDateString()
-  };
-
-  // Re-load from storage first to avoid stale state
-  const stored = localStorage.getItem("blogPosts");
-  blogPosts = stored ? JSON.parse(stored) : [];
-
-  blogPosts.unshift(post);
-  savePosts();
-  renderPosts();
-}
-
-// =========================
-// SAVE POSTS
-// =========================
-function savePosts() {
-  localStorage.setItem("blogPosts", JSON.stringify(blogPosts));
-}
-
-// =========================
-// LOAD POSTS
-// =========================
-function loadPosts() {
-  const stored = localStorage.getItem("blogPosts");
-  if (stored) {
-    try {
-      blogPosts = JSON.parse(stored);
-    } catch {
-      blogPosts = [];
-    }
-  } else {
-    blogPosts = [
-      {
-        id: 1,
-        title: "Welcome to My Cybersecurity Journal",
-        content:
-          "This blog tracks my journey in SOC analysis, threat hunting, and ML security systems. I share write-ups, tool reviews, and lessons from the lab.",
-        category: "Intro",
+async function addBlogPost(title, content, category = "General") {
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/blog_posts",
+    {
+      method:  "POST",
+      headers: { ...HEADERS, "Prefer": "return=representation" },
+      body: JSON.stringify({
+        title,
+        content,
+        category,
         date: new Date().toDateString()
-      }
-    ];
-    savePosts();
-  }
-  renderPosts();
+      })
+    }
+  );
+  return res.ok;
 }
 
 // =========================
-// RENDER POSTS (XSS-safe)
+// DELETE POST
 // =========================
-function renderPosts() {
+async function deletePost(id) {
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/blog_posts?id=eq." + id,
+    { method: "DELETE", headers: HEADERS }
+  );
+  return res.ok;
+}
+
+// =========================
+// RENDER POSTS
+// =========================
+function renderPosts(posts) {
   const container = document.getElementById("blog-container");
   if (!container) return;
 
   container.innerHTML = "";
 
-  if (blogPosts.length === 0) {
-    container.innerHTML = `<p style="color:var(--text-dim);font-size:13px;padding:2rem 0;">No posts yet. Publish your first post from the admin panel.</p>`;
+  if (!posts || posts.length === 0) {
+    const empty = document.createElement("p");
+    empty.style.cssText = "color:var(--text-dim);font-size:13px;padding:2rem 0;";
+    empty.textContent = "No posts yet.";
+    container.appendChild(empty);
     return;
   }
 
   const from = sessionStorage.getItem("entryPoint") || "blog";
 
-  blogPosts.forEach(post => {
+  posts.forEach(post => {
     const card = document.createElement("div");
-    card.className = "blog-card";
+    card.className = "card";
 
-    // All values sanitized — no innerHTML with raw user data
+    const meta = document.createElement("div");
+    meta.className = "meta";
+
     const cat = document.createElement("span");
-    cat.className = "blog-cat";
     cat.textContent = post.category;
 
     const date = document.createElement("span");
-    date.className = "blog-date";
     date.textContent = post.date;
 
-    const meta = document.createElement("div");
-    meta.className = "blog-meta";
     meta.append(cat, date);
 
     const title = document.createElement("div");
-    title.className = "blog-title";
+    title.className = "title";
     title.textContent = post.title;
 
     const excerpt = document.createElement("div");
-    excerpt.className = "blog-excerpt";
-    excerpt.textContent = post.content.substring(0, 160) + "…";
+    excerpt.className = "excerpt";
+    excerpt.textContent = (post.content || "").substring(0, 160) + "…";
 
     const link = document.createElement("a");
-    link.className = "blog-read";
-    link.href = `blog-post.html?id=${encodeURIComponent(post.id)}&from=${encodeURIComponent(from)}`;
+    link.className = "read";
+    link.href = "blog-post.html?id=" + encodeURIComponent(post.id) + "&from=" + encodeURIComponent(from);
     link.textContent = "Read more →";
 
     card.append(meta, title, excerpt, link);
@@ -125,24 +110,16 @@ function renderPosts() {
 }
 
 // =========================
-// DELETE POST
+// LOAD POSTS (blog.html)
 // =========================
-function deletePost(id) {
-  blogPosts = blogPosts.filter(post => post.id !== id);
-  savePosts();
-  renderPosts();
-}
+async function loadPosts() {
+  const container = document.getElementById("blog-container");
+  if (!container) return;
 
-// =========================
-// GET ALL POSTS
-// =========================
-function getAllPosts() {
-  const stored = localStorage.getItem("blogPosts");
-  try {
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
+  container.innerHTML = "<p style='color:var(--text-dim);font-size:12px;padding:2rem;'>Loading posts...</p>";
+
+  const posts = await getAllPosts();
+  renderPosts(posts);
 }
 
 // =========================
@@ -155,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // =========================
 // GLOBAL EXPORT
 // =========================
+window.getAllPosts  = getAllPosts;
 window.addBlogPost = addBlogPost;
 window.deletePost  = deletePost;
-window.getAllPosts  = getAllPosts;
+window.loadPosts   = loadPosts;
