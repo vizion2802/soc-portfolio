@@ -14,35 +14,66 @@
       --font-display: 'Syne', sans-serif;
     }
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--black); color:var(--text); font-family:var(--font-mono); display:flex; min-height:100vh; }
 
-    body {
-      background:var(--black); color:var(--text);
-      font-family:var(--font-mono); display:flex; min-height:100vh;
-    }
-
-    /* ── LOGIN ── */
+    /* ── LOGIN BOX ── */
     #loginBox {
       position:fixed; inset:0; background:var(--black);
       display:flex; flex-direction:column; justify-content:center;
-      align-items:center; gap:1rem; z-index:999;
+      align-items:center; gap:0; z-index:999;
     }
-    #loginBox h2 { font-family:var(--font-display); color:var(--green); font-size:1.6rem; }
-    #loginBox .login-sub { font-size:11px; color:var(--text-dim); letter-spacing:0.12em; text-transform:uppercase; }
+
+    /* PASSWORD STEP */
+    #passwordStep {
+      display:flex; flex-direction:column; align-items:center; gap:1rem;
+    }
+
+    /* OTP STEP */
+    #otpStep {
+      display:none; flex-direction:column; align-items:center; gap:1rem;
+    }
+
+    #loginBox h2 { font-family:var(--font-display); color:var(--green); font-size:1.6rem; margin-bottom:0.5rem; }
+    #loginBox .login-sub { font-size:11px; color:var(--text-dim); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem; }
+
     #loginBox input {
       width:280px; text-align:center; background:transparent;
       border:1px solid var(--border); color:var(--text); padding:0.7rem;
-      font-family:var(--font-mono); font-size:13px; outline:none; transition:border-color 0.2s;
+      font-family:var(--font-mono); font-size:13px; outline:none;
+      letter-spacing:0.15em; transition:border-color 0.2s;
     }
     #loginBox input:focus { border-color:var(--green); }
+
     #loginBox button {
       width:280px; background:var(--green); border:none; padding:0.7rem;
       cursor:pointer; font-family:var(--font-mono); font-size:12px;
-      font-weight:bold; letter-spacing:0.1em; text-transform:uppercase; color:var(--black); transition:all 0.2s;
+      font-weight:bold; letter-spacing:0.1em; text-transform:uppercase;
+      color:var(--black); transition:all 0.2s;
     }
     #loginBox button:hover { background:transparent; color:var(--green); border:1px solid var(--green); }
     #loginBox button:disabled { opacity:0.5; cursor:not-allowed; }
-    #loginError { font-size:12px; color:var(--red); min-height:1.2rem; text-align:center; }
-    .login-note { font-size:10px; color:var(--text-dim); opacity:0.5; max-width:280px; text-align:center; line-height:1.6; }
+
+    #loginError { font-size:12px; min-height:1.2rem; text-align:center; color:var(--red); }
+    #otpError   { font-size:12px; min-height:1.2rem; text-align:center; color:var(--red); }
+    #otpInfo    { font-size:12px; text-align:center; color:var(--green); }
+    #otpCountdown { font-size:11px; color:var(--text-dim); text-align:center; }
+
+    .login-note {
+      font-size:10px; color:var(--text-dim); opacity:0.5;
+      max-width:280px; text-align:center; line-height:1.6; margin-top:0.5rem;
+    }
+
+    .resend-link {
+      font-size:11px; color:var(--text-dim); cursor:pointer;
+      text-decoration:underline; background:none; border:none;
+      font-family:var(--font-mono); width:auto; padding:0;
+      letter-spacing:normal; text-transform:none;
+    }
+    .resend-link:hover { color:var(--green); background:none; border:none; }
+
+    .otp-divider {
+      width:280px; border:none; border-top:1px solid var(--border); margin:0.5rem 0;
+    }
 
     /* ── SIDEBAR ── */
     .sidebar { width:220px; background:var(--panel); border-right:1px solid var(--border); padding:2rem 1rem; flex-shrink:0; }
@@ -58,7 +89,7 @@
     /* ── MAIN ── */
     .main { flex:1; padding:2rem; overflow-y:auto; }
     .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; padding-bottom:1rem; border-bottom:1px solid var(--border); }
-    .header h1 { font-family:var(--font-display); color:var(--green); font-size:1.4rem; letter-spacing:-0.03em; }
+    .header h1 { font-family:var(--font-display); color:var(--green); font-size:1.4rem; }
     .status-badge { font-size:11px; color:var(--text-dim); display:flex; align-items:center; gap:0.5rem; }
     .status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 1.4s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
@@ -67,27 +98,26 @@
     .tabs { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
     .tab-btn {
       font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em;
-      text-transform:uppercase; padding:0.5rem 1rem; border:1px solid var(--border);
-      background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.2s;
+      text-transform:uppercase; padding:0.5rem 1rem;
+      border:1px solid var(--border); background:transparent;
+      color:var(--text-dim); cursor:pointer; transition:all 0.2s;
     }
-    .tab-btn.active { border-color:var(--green); color:var(--green); background:rgba(57,255,90,0.05); }
-    .tab-btn:hover { border-color:var(--green); color:var(--green); }
+    .tab-btn.active, .tab-btn:hover { border-color:var(--green); color:var(--green); background:rgba(57,255,90,0.05); }
 
     .tab-content { display:none; }
     .tab-content.active { display:block; }
 
     /* ── GRID ── */
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
-
-    /* ── CARD ── */
     .card { background:var(--panel); border:1px solid var(--border); padding:1.5rem; }
     .card h3 { color:var(--green); margin-bottom:1rem; font-size:11px; text-transform:uppercase; letter-spacing:0.15em; }
     .card-wide { grid-column:1/-1; }
 
-    input[type="text"], input[type="url"], input[type="password"], textarea, select {
-      width:100%; background:transparent; border:1px solid var(--border); color:var(--text);
-      padding:0.6rem 0.8rem; margin-bottom:0.8rem; font-family:var(--font-mono);
-      font-size:12px; outline:none; transition:border-color 0.2s;
+    input[type="text"], input[type="url"], input[type="password"],
+    input[type="number"], textarea, select {
+      width:100%; background:transparent; border:1px solid var(--border);
+      color:var(--text); padding:0.6rem 0.8rem; margin-bottom:0.8rem;
+      font-family:var(--font-mono); font-size:12px; outline:none; transition:border-color 0.2s;
     }
     input:focus, textarea:focus, select:focus { border-color:var(--green); }
     select option { background:var(--panel); }
@@ -100,6 +130,7 @@
     button:hover { background:transparent; color:var(--green); }
 
     .msg-box { margin-top:10px; font-size:12px; padding:8px 10px; border-left:2px solid var(--green); display:none; }
+    .field-hint { font-size:10px; color:var(--text-dim); margin-top:-0.5rem; margin-bottom:0.8rem; opacity:0.7; }
 
     /* ── ADMIN LIST ── */
     .admin-post { border:1px solid var(--border); padding:1rem; margin-bottom:0.75rem; background:rgba(57,255,90,0.02); }
@@ -113,24 +144,42 @@
     .terminal { background:black; border:1px solid var(--border); padding:1rem; font-size:12px; height:180px; overflow-y:auto; margin-top:0.5rem; }
     .terminal p { margin-bottom:0.3rem; }
     .green { color:var(--green); } .red { color:var(--red); } .amber { color:var(--amber); }
-
-    .field-hint { font-size:10px; color:var(--text-dim); margin-top:-0.5rem; margin-bottom:0.8rem; opacity:0.7; }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ══ LOGIN ══ -->
 <div id="loginBox">
-  <h2>ADMIN LOGIN</h2>
-  <p class="login-sub">SOC Dashboard — Restricted Area</p>
-  <input id="password" type="password" placeholder="Enter password" autocomplete="current-password"
-         onkeydown="if(event.key==='Enter') checkPassword()" />
-  <button id="loginBtn" onclick="checkPassword()">Login</button>
-  <p id="loginError"></p>
-  <p class="login-note">3 failed attempts locks panel for 10 minutes.</p>
+
+  <!-- STEP 1: PASSWORD -->
+  <div id="passwordStep">
+    <h2>ADMIN LOGIN</h2>
+    <p class="login-sub">SOC Dashboard — Restricted Area</p>
+    <input id="password" type="password" placeholder="Enter password"
+           autocomplete="current-password"
+           onkeydown="if(event.key==='Enter') checkPassword()" />
+    <button id="loginBtn" onclick="checkPassword()">Login</button>
+    <p id="loginError"></p>
+    <p class="login-note">3 failed attempts locks panel for 10 minutes.</p>
+  </div>
+
+  <!-- STEP 2: OTP -->
+  <div id="otpStep">
+    <h2>VERIFY OTP</h2>
+    <p class="login-sub">Two-Factor Authentication</p>
+    <p id="otpInfo"></p>
+    <input id="otpInput" type="number" placeholder="Enter 6-digit OTP"
+           maxlength="6" onkeydown="if(event.key==='Enter') verifyOTP()" />
+    <button id="otpBtn" onclick="verifyOTP()">Verify OTP</button>
+    <p id="otpError"></p>
+    <p id="otpCountdown"></p>
+    <hr class="otp-divider" />
+    <button class="resend-link" onclick="resendOTP()">Didn't receive it? Resend OTP</button>
+  </div>
+
 </div>
 
-<!-- SIDEBAR -->
+<!-- ══ SIDEBAR ══ -->
 <div class="sidebar">
   <div class="logo">AT ADMIN</div>
   <div class="menu">
@@ -142,7 +191,7 @@
   </div>
 </div>
 
-<!-- MAIN -->
+<!-- ══ MAIN ══ -->
 <div class="main">
   <div class="header">
     <h1>Control Panel</h1>
@@ -154,17 +203,15 @@
 
   <div id="adminPanel" style="display:none;">
 
-    <!-- TABS -->
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('blog')">Blog</button>
       <button class="tab-btn" onclick="switchTab('projects')">Projects</button>
       <button class="tab-btn" onclick="switchTab('terminal')">Terminal</button>
     </div>
 
-    <!-- ── BLOG TAB ── -->
+    <!-- BLOG TAB -->
     <div class="tab-content active" id="tab-blog">
       <div class="grid">
-
         <div class="card">
           <h3>Create Blog Post</h3>
           <input id="title" type="text" placeholder="Post Title" maxlength="120" />
@@ -172,54 +219,42 @@
           <button onclick="publishPost()">Publish Post</button>
           <div class="msg-box" id="publishMsg"></div>
         </div>
-
         <div class="card card-wide">
           <h3>Published Posts</h3>
           <div id="adminPosts"></div>
         </div>
-
       </div>
     </div>
 
-    <!-- ── PROJECTS TAB ── -->
+    <!-- PROJECTS TAB -->
     <div class="tab-content" id="tab-projects">
       <div class="grid">
-
         <div class="card">
           <h3>Add Project</h3>
-
           <input id="p-title" type="text" placeholder="Project Title" maxlength="120" />
-
           <textarea id="p-desc" rows="4" placeholder="Project Description" maxlength="1000"></textarea>
-
           <select id="p-cat">
             <option value="soc">SOC</option>
             <option value="ml">ML / Data</option>
             <option value="pentest">Pen Test</option>
           </select>
-
           <input id="p-stack" type="text" placeholder="Stack (e.g. Splunk, Python, Sigma)" maxlength="200" />
           <p class="field-hint">Separate tools with commas</p>
-
-          <input id="p-report" type="url" placeholder="Report URL (PDF link or Google Drive)" />
+          <input id="p-report" type="url" placeholder="Report URL (PDF — Google Drive or GitHub)" />
           <p class="field-hint">Paste a public link to your PDF report</p>
-
-          <input id="p-screenshot" type="url" placeholder="Screenshot URL (image link)" />
+          <input id="p-screenshot" type="url" placeholder="Screenshot URL (Imgur or GitHub)" />
           <p class="field-hint">Paste a public link to your screenshot</p>
-
           <button onclick="publishProject()">Save Project</button>
           <div class="msg-box" id="projectMsg"></div>
         </div>
-
         <div class="card card-wide">
           <h3>Published Projects</h3>
           <div id="adminProjectsList"></div>
         </div>
-
       </div>
     </div>
 
-    <!-- ── TERMINAL TAB ── -->
+    <!-- TERMINAL TAB -->
     <div class="tab-content" id="tab-terminal">
       <div class="card">
         <h3>Admin Terminal</h3>
@@ -237,7 +272,6 @@
 
 <script src="blog.js"></script>
 <script src="admin.js"></script>
-
 <script>
 function switchTab(name) {
   document.querySelectorAll(".tab-content").forEach(function(t){ t.classList.remove("active"); });
