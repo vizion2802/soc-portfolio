@@ -1,15 +1,16 @@
 // =========================
-// ADMIN PANEL — admin.js v4
-// Supabase + SHA-256 login
+// ADMIN PANEL — admin.js v5
+// Supabase Edge Function
 // =========================
 
 console.log("ADMIN PANEL CONNECTED ✅");
 
-// SHA-256 hash of admin password
-// To update: run in console:
-// crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
-//   .then(b => console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')))
-const ADMIN_HASH = "d329574f747890c4b6d489aa1a32669bb10ba4ba54190919daaafe2a79bfb3e3";
+const ADMIN_HASH   = "d329574f747890c4b6d489aa1a32669bb10ba4ba54190919daaafe2a79bfb3e3";
+const EDGE_URL     = "https://zocllfhpzsomhxtpyrdd.supabase.co/functions/v1/manage-posts";
+const ADMIN_SECRET = "SOC@dmin$ecret2026!";
+
+const SUPABASE_URL  = "https://zocllfhpzsomhxtpyrdd.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvY2xsZmhwenNvbWh4dHB5cmRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjQzNTAsImV4cCI6MjA5NTM0MDM1MH0.A5iI1gRoE4rL6bmkmkB9O4GT01Sn2SHixr-EQK73RqQ";
 
 let attempts = 0;
 const MAX_ATTEMPTS = 3;
@@ -99,7 +100,7 @@ function lockPanel() {
 }
 
 // =========================
-// PUBLISH BLOG POST
+// PUBLISH POST — via Edge Function
 // =========================
 async function publishPost() {
   const title   = document.getElementById("title").value.trim();
@@ -117,17 +118,73 @@ async function publishPost() {
   msg.textContent = "⏳ Publishing...";
   msg.style.display = "block";
 
-  const ok = await addBlogPost(title, content, "General");
+  try {
+    const res = await fetch(EDGE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type":    "application/json",
+        "x-admin-secret":  ADMIN_SECRET
+      },
+      body: JSON.stringify({ title, content, category: "General" })
+    });
 
-  if (ok) {
-    clearForm();
-    loadAdminPosts();
-    msg.style.color = "#39ff5a";
-    msg.textContent = "✅ Post published successfully";
-    setTimeout(function() { msg.style.display = "none"; }, 3000);
-  } else {
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      clearForm();
+      loadAdminPosts();
+      msg.style.color = "#39ff5a";
+      msg.textContent = "✅ Post published successfully";
+      setTimeout(function() { msg.style.display = "none"; }, 3000);
+    } else {
+      msg.style.color = "#ff3b3b";
+      msg.textContent = "❌ Failed: " + (data.error || "Unknown error");
+    }
+  } catch (err) {
     msg.style.color = "#ff3b3b";
-    msg.textContent = "❌ Failed to publish. Check your Supabase connection.";
+    msg.textContent = "❌ Network error. Check your connection.";
+  }
+}
+
+// =========================
+// DELETE POST — via Edge Function
+// =========================
+async function deletePost(id) {
+  try {
+    const res = await fetch(EDGE_URL, {
+      method: "DELETE",
+      headers: {
+        "Content-Type":   "application/json",
+        "x-admin-secret": ADMIN_SECRET
+      },
+      body: JSON.stringify({ id })
+    });
+    const data = await res.json();
+    return res.ok && data.success;
+  } catch (err) {
+    console.error("Delete failed:", err);
+    return false;
+  }
+}
+
+// =========================
+// GET ALL POSTS — public read
+// =========================
+async function getAllPosts() {
+  try {
+    const res = await fetch(
+      SUPABASE_URL + "/rest/v1/blog_posts?order=created_at.desc",
+      {
+        headers: {
+          "apikey":        SUPABASE_ANON,
+          "Authorization": "Bearer " + SUPABASE_ANON
+        }
+      }
+    );
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
   }
 }
 
@@ -174,8 +231,12 @@ async function loadAdminPosts() {
     del.textContent = "Delete";
     del.onclick = async function() {
       if (confirm("Delete \"" + post.title + "\"?")) {
-        await deletePost(post.id);
-        loadAdminPosts();
+        const ok = await deletePost(post.id);
+        if (ok) {
+          loadAdminPosts();
+        } else {
+          alert("Failed to delete post.");
+        }
       }
     };
 
